@@ -7,6 +7,7 @@ import {
   FireIcon,
   ChartBarIcon,
   ChevronDownIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 
 const navItems = [
@@ -30,11 +31,12 @@ const navItems = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ open = false, onClose }) {
   const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState(false);
-  return (
-    <aside className="h-screen w-72 bg-gradient-to-b from-white via-blue-50 to-gray-100 border-r border-gray-200 flex flex-col py-8 px-6 shadow-xl">
+  // Sidebar content
+  const sidebarContent = (
+    <aside className="h-full w-72 bg-gradient-to-b from-white via-blue-50 to-gray-100 border-r border-gray-200 flex flex-col py-8 px-6 shadow-xl">
       <div className="mb-10 flex items-center gap-3 px-2">
         <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
           <rect width="48" height="48" rx="12" fill="#2563eb" />
@@ -49,6 +51,16 @@ export default function Sidebar() {
         <span className="text-2xl font-extrabold text-blue-700 tracking-tight">
           Dashboard
         </span>
+        {/* Mobile close button */}
+        {onClose && (
+          <button
+            className="ml-auto md:hidden p-2 rounded hover:bg-blue-100"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
+            <XMarkIcon className="w-6 h-6 text-blue-700" />
+          </button>
+        )}
       </div>
       <div className="mb-4 mt-2 text-xs font-semibold text-gray-500 tracking-widest uppercase px-2">
         Main Menu
@@ -126,5 +138,27 @@ export default function Sidebar() {
         All rights reserved.
       </div>
     </aside>
+  );
+
+  // Desktop: always show, Mobile: show as overlay if open
+  return (
+    <>
+      {/* Mobile overlay */}
+      <div
+        className={`fixed inset-0 z-40 bg-black bg-opacity-30 transition-opacity md:hidden ${
+          open ? "block" : "hidden"
+        }`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transition-transform md:static md:translate-x-0 md:flex ${
+          open ? "translate-x-0" : "-translate-x-full md:translate-x-0 md:flex"
+        } md:h-screen w-72`}
+        style={{ willChange: "transform" }}
+      >
+        {sidebarContent}
+      </div>
+    </>
   );
 }

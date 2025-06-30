@@ -1,9 +1,20 @@
 import React from "react";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 
-export default function Navbar() {
+export default function Navbar({ onMenuClick }) {
   return (
-    <header className="w-full h-16 bg-white shadow flex items-center justify-between px-8 border-b border-gray-200">
+    <header className="w-full h-16 bg-white shadow flex items-center justify-between px-4 md:px-8 border-b border-gray-200">
       <div className="flex items-center gap-3">
+        {/* Hamburger menu for mobile */}
+        {onMenuClick && (
+          <button
+            className="md:hidden p-2 rounded hover:bg-blue-100"
+            onClick={onMenuClick}
+            aria-label="Open sidebar"
+          >
+            <Bars3Icon className="w-7 h-7 text-blue-700" />
+          </button>
+        )}
         <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
           <rect width="48" height="48" rx="12" fill="#2563eb" />
           <path
