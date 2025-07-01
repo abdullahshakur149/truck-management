@@ -5,8 +5,11 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ClipLoader } from "react-spinners";
+import { db } from "@/lib/firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export default function RegisterForm() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -20,7 +23,19 @@ export default function RegisterForm() {
     setError("");
     setSuccess("");
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = userCredential.user;
+      // Save user profile in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        name,
+        email,
+        role: "supervisor",
+        createdAt: serverTimestamp(),
+      });
       setSuccess("Registration successful! Redirecting...");
       setTimeout(() => router.push("/"), 1500);
     } catch (err) {
@@ -63,6 +78,17 @@ export default function RegisterForm() {
           {success}
         </div>
       )}
+      <div className="mb-4">
+        <label className="block mb-1 text-gray-700">Name</label>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+          placeholder="Enter your name"
+        />
+      </div>
       <div className="mb-4">
         <label className="block mb-1 text-gray-700">Email</label>
         <input
